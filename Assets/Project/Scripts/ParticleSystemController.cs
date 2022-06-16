@@ -1,4 +1,3 @@
-using NrealEventSample.Utility;
 using UnityEngine;
 
 namespace NrealEventSample.Demo
@@ -6,11 +5,12 @@ namespace NrealEventSample.Demo
     public class ParticleSystemController : MonoBehaviour
     {
         [SerializeField] private TextParticleSystem _particleSystem;
-        [SerializeField] private TextTextureRepository _textTextureRepository;
+        [SerializeField] private MessageMaker _messageMaker;
 
         private void Start()
         {
-            _particleSystem.SetTextTexture(_textTextureRepository.GetTextureAt(0));
+            Texture2D texture = _messageMaker.Make("hogehoge");
+            _particleSystem.SetTextTexture(texture);
         }
     }
 }
