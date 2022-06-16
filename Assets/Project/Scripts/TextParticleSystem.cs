@@ -28,6 +28,7 @@ namespace NrealEventSample
         [SerializeField] private float _threshold = 0.1f;
         [SerializeField] private Transform _targetTransform;
         [SerializeField] private float _areaSize = 0.5f;
+        [SerializeField] private float _magnification = 5.0f;
 
         [Header("==== Setting for particle ====")] [SerializeField]
         private int _particleCount = 120_000;
@@ -176,22 +177,6 @@ namespace NrealEventSample
                 gameObject.layer);
         }
 
-        public void AddRandomVelocity(float magnification = 1f)
-        {
-            for (int i = 0; i < _particleData.Length; i++)
-            {
-                ParticleData pdata = new ParticleData
-                {
-                    activateTypes = (uint)(ActivateType.velocity),
-                    velocity = Random.insideUnitSphere * magnification,
-                };
-
-                _particleData[i] = pdata;
-            }
-
-            UpdateParticleData();
-        }
-
         public void SetTextTexture(Texture2D texture)
         {
             _textPositions.Clear();
@@ -211,7 +196,7 @@ namespace NrealEventSample
                     activateTypes = (uint)(ActivateType.targetPosition | ActivateType.color | ActivateType.velocity | ActivateType.scale),
                     scale = _particleScale,
                     targetPosition = p,
-                    velocity = Random.insideUnitSphere * 5.0f,
+                    velocity = Random.insideUnitSphere * _magnification,
                     color = _particleColor,
                 };
 
