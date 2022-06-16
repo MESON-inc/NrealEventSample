@@ -217,17 +217,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!114 &724796068 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 758003224042111791, guid: b3bef64e24f1bd340a10c0c87169a252, type: 3}
-  m_PrefabInstance: {fileID: 758003224393417099}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &830354616 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 758003224147670323, guid: b3bef64e24f1bd340a10c0c87169a252, type: 3}
@@ -385,10 +374,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 758003224147670323, guid: b3bef64e24f1bd340a10c0c87169a252, type: 3}
-      propertyPath: _text
-      value: 
-      objectReference: {fileID: 724796068}
     - target: {fileID: 758003224147670332, guid: b3bef64e24f1bd340a10c0c87169a252, type: 3}
       propertyPath: m_Name
       value: MessageMaker
@@ -462,11 +447,6 @@ PrefabInstance:
     - target: {fileID: 7845172358379328840, guid: 583014c58681b0d41bc9a20c9e0613a9, type: 3}
       propertyPath: m_Name
       value: ParticleSystemController
-      objectReference: {fileID: 0}
-    - target: {fileID: 7845172358379328841, guid: 583014c58681b0d41bc9a20c9e0613a9, type: 3}
-      propertyPath: _message
-      value: MESON is an XR Creative Company. We build and deliver services for augmenting
-        human experiences.
       objectReference: {fileID: 0}
     - target: {fileID: 7845172358379328841, guid: 583014c58681b0d41bc9a20c9e0613a9, type: 3}
       propertyPath: _messageMaker

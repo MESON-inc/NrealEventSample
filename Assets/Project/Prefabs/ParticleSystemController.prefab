@@ -46,3 +46,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _particleSystem: {fileID: 0}
   _messageMaker: {fileID: 0}
+  _message: MESON is an XR Creative Company. We build and deliver services for augmenting
+    human experiences.
