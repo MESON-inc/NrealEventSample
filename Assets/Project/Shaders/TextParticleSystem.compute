@@ -1,0 +1,72 @@
+#pragma kernel Update
+#pragma kernel Initialize
+
+#include "Include/Particle.cginc"
+#include "Include/NoiseUtils.cginc"
+
+#define FLT_MIN 1.175494351e-38
+
+float _DeltaTime;
+RWStructuredBuffer<Particle> _ParticleBuffer;
+StructuredBuffer<ParticleData> _ParticleDataBuffer;
+float4x4 _TargetMatrix;
+
+float _StickDistance;
+float _StickForce;
+float _AttentionForce;
+float _AttentionSpeed;
+float _Suppress;
+
+int _ParticleCount;
+
+[numthreads(8,1,1)]
+void Initialize(uint id : SV_DispatchThreadID)
+{
+    Particle p = _ParticleBuffer[id];
+    ParticleData data = _ParticleDataBuffer[id];
+
+    p.targetPosition = lerp(p.targetPosition, data.targetPosition, (data.activateTypes & 1));
+    p.color = lerp(p.color, data.color, ((data.activateTypes >> 1) & 1));
+    p.scale = lerp(p.scale, data.scale, ((data.activateTypes >> 2) & 1));
+    p.velocity = lerp(p.velocity, data.velocity, ((data.activateTypes >> 3) & 1));
+    p.active = (uint)((_ParticleCount > id) ? 1 : 0);
+
+    _ParticleBuffer[id] = p;
+}
+
+[numthreads(8,1,1)]
+void Update(uint id : SV_DispatchThreadID)
+{
+    Particle p = _ParticleBuffer[id];
+    float3 targetPosition = mul(_TargetMatrix, float4(p.targetPosition.xyz, 1.0)).xyz;
+
+    float3 dir = targetPosition - p.position;
+    float distToCenter = length(dir);
+    dir /= max(FLT_MIN, distToCenter);
+
+    float spdNormal = dot(p.velocity, dir);
+
+    float ratio = smoothstep(0.0, _StickDistance * 0.01, distToCenter);
+    float tgtSpeed = _AttentionSpeed * ratio;
+    float deltaSpeed = tgtSpeed - spdNormal;
+    float limitSpeed = lerp(_StickForce, _AttentionForce, ratio) * _DeltaTime;
+    float cappedSpeed = min(limitSpeed, abs(deltaSpeed));
+
+    p.velocity += sign(deltaSpeed) * cappedSpeed * dir;
+
+    // float correction = dot(dir, length(p.velocity));
+    // p.velocity *= correction;
+    p.velocity *= 0.99;
+
+    if (length(p.velocity) < _Suppress)
+    {
+        p.velocity = 0;
+        p.position = lerp(p.position, targetPosition, _DeltaTime * 5.0);
+    }
+    else
+    {
+        p.position += p.velocity * _DeltaTime;
+    }
+
+    _ParticleBuffer[id] = p;
+}
