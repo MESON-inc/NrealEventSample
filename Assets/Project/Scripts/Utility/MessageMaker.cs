@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace NrealEventSample
@@ -5,8 +6,12 @@ namespace NrealEventSample
     public class MessageMaker : MonoBehaviour
     {
         [SerializeField] private Camera _camera;
+        [SerializeField] private TMP_Text _text;
+
         public Texture2D Make(string message)
         {
+            _text.text = message;
+            
             _camera.Render();
 
             RenderTexture backup = RenderTexture.active;
