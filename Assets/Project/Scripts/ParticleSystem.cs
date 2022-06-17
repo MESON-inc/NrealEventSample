@@ -16,7 +16,7 @@ namespace NrealEventSample
         velocity = 1 << 3,
     }
 
-    public class TextParticleSystem : MonoBehaviour
+    public class ParticleSystem : MonoBehaviour
     {
         [SerializeField] private ComputeShader _shader;
         [SerializeField] private Material _material;
@@ -29,6 +29,7 @@ namespace NrealEventSample
         [SerializeField] private Transform _targetTransform;
         [SerializeField] private float _areaSize = 0.5f;
         [SerializeField] private float _magnification = 5.0f;
+        [SerializeField] private float _distribution = 1f;
         [SerializeField] private float _fixedDeltaTime = 0.016f;
 
         [Header("==== Setting for particle ====")] [SerializeField]
@@ -117,7 +118,7 @@ namespace NrealEventSample
 
             for (int i = 0; i < particles.Length; ++i)
             {
-                Vector3 pos = _targetTransform.position + Random.insideUnitSphere * 2.5f;
+                Vector3 pos = _targetTransform.position + Random.insideUnitSphere * _distribution;
 
                 Vector4 color = new Vector4(_particleColor.r, _particleColor.g, _particleColor.b, _particleColor.a);
 
@@ -192,7 +193,7 @@ namespace NrealEventSample
             _running = false;
         }
 
-        public void SetTextTexture(Texture2D texture)
+        public void SetTexture(Texture2D texture)
         {
             _textPositions.Clear();
 

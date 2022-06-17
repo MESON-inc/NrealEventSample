@@ -5,7 +5,7 @@ namespace NrealEventSample.Demo
 {
     public class ParticleSystemController : MonoBehaviour
     {
-        [SerializeField] private TextParticleSystem _particleSystem;
+        [SerializeField] private ParticleSystem _particleSystem;
         [SerializeField] private MessageMaker _messageMaker;
 
         [SerializeField] private string[] _messages = new string[]
@@ -45,7 +45,7 @@ namespace NrealEventSample.Demo
         private void Apply()
         {
             Texture2D texture = _messageMaker.Make(_messages[_index]);
-            _particleSystem.SetTextTexture(texture);
+            _particleSystem.SetTexture(texture);
 
             _index = (_index + 1) % _messages.Length;
         }
