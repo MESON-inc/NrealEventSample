@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace NrealEventSample.Demo
@@ -6,18 +7,47 @@ namespace NrealEventSample.Demo
     {
         [SerializeField] private TextParticleSystem _particleSystem;
         [SerializeField] private MessageMaker _messageMaker;
-        [SerializeField, Multiline] private string _message = "This is a sample message.";
 
-        private void Start()
+        [SerializeField] private string[] _messages = new string[]
+        {
+            "MESON is an XR Creative Company. We build and deliver services for augmenting human experiences.",
+            "Stone, electricity, computer. Humanity augments possibilities and choices via inventing and combining these technologies. MESON augments human experiences through driving the dynamics of XR, Metaverse, and Web3 technologies.",
+        };
+
+        private int _index = 0;
+
+        private IEnumerator Start()
         {
             Application.targetFrameRate = 60;
-            Apply();
+
+            yield return new WaitForSeconds(1f);
+
+            StartParticle();
+        }
+
+        private void StartParticle()
+        {
+            _particleSystem.Play();
+
+            StartCoroutine(PlayLoop());
+        }
+
+        private IEnumerator PlayLoop()
+        {
+            while (true)
+            {
+                Apply();
+
+                yield return new WaitForSeconds(5f);
+            }
         }
 
         private void Apply()
         {
-            Texture2D texture = _messageMaker.Make(_message);
+            Texture2D texture = _messageMaker.Make(_messages[_index]);
             _particleSystem.SetTextTexture(texture);
+
+            _index = (_index + 1) % _messages.Length;
         }
 
 #if UNITY_EDITOR

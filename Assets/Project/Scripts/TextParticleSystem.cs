@@ -47,6 +47,8 @@ namespace NrealEventSample
         private List<Vector4> _textPositions;
         private ParticleData[] _particleData;
 
+        private bool _running = false;
+
         private float _ratio = 1f;
 
         #region ### ------------------------------ MonoBehaviour ------------------------------ ###
@@ -61,6 +63,8 @@ namespace NrealEventSample
 
         private void Update()
         {
+            if (!_running) return;
+            
             UpdateParticles();
             DrawParticles();
         }
@@ -176,6 +180,16 @@ namespace NrealEventSample
                 UnityEngine.Rendering.ShadowCastingMode.Off,
                 false,
                 gameObject.layer);
+        }
+
+        public void Play()
+        {
+            _running = true;
+        }
+
+        public void Stop()
+        {
+            _running = false;
         }
 
         public void SetTextTexture(Texture2D texture)

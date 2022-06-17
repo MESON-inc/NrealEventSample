@@ -486,6 +486,25 @@ PrefabInstance:
       propertyPath: _particleSystem
       value: 
       objectReference: {fileID: 1777832033}
+    - target: {fileID: 7845172358379328841, guid: 583014c58681b0d41bc9a20c9e0613a9, type: 3}
+      propertyPath: _message.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7845172358379328841, guid: 583014c58681b0d41bc9a20c9e0613a9, type: 3}
+      propertyPath: _messages.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7845172358379328841, guid: 583014c58681b0d41bc9a20c9e0613a9, type: 3}
+      propertyPath: _messages.Array.data[0]
+      value: MESON is an XR Creative Company. We build and deliver services for augmenting
+        human experiences.
+      objectReference: {fileID: 0}
+    - target: {fileID: 7845172358379328841, guid: 583014c58681b0d41bc9a20c9e0613a9, type: 3}
+      propertyPath: _messages.Array.data[1]
+      value: Stone, electricity, computer. Humanity augments possibilities and choices
+        via inventing and combining these technologies. MESON augments human experiences
+        through driving the dynamics of XR, Metaverse, and Web3 technologies.
+      objectReference: {fileID: 0}
     - target: {fileID: 7845172358379328842, guid: 583014c58681b0d41bc9a20c9e0613a9, type: 3}
       propertyPath: m_RootOrder
       value: 4
