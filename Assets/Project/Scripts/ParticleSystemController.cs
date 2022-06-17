@@ -14,6 +14,8 @@ namespace NrealEventSample.Demo
             "Stone, electricity, computer. Humanity augments possibilities and choices via inventing and combining these technologies. MESON augments human experiences through driving the dynamics of XR, Metaverse, and Web3 technologies.",
         };
 
+        [SerializeField] private bool _autoPlay = true;
+
         private int _index = 0;
 
         private IEnumerator Start()
@@ -25,24 +27,27 @@ namespace NrealEventSample.Demo
             StartParticle();
         }
 
-        private void StartParticle()
+        public void StartParticle()
         {
             _particleSystem.Play();
 
-            StartCoroutine(PlayLoop());
+            if (_autoPlay)
+            {
+                StartCoroutine(PlayLoop());
+            }
         }
 
         private IEnumerator PlayLoop()
         {
             while (true)
             {
-                Apply();
+                ApplyNext();
 
                 yield return new WaitForSeconds(5f);
             }
         }
 
-        private void Apply()
+        public void ApplyNext()
         {
             Texture2D texture = _messageMaker.Make(_messages[_index]);
             _particleSystem.SetTexture(texture);
@@ -64,7 +69,7 @@ namespace NrealEventSample.Demo
 
                 if (GUILayout.Button("Apply"))
                 {
-                    controller.Apply();
+                    controller.ApplyNext();
                 }
             }
         }

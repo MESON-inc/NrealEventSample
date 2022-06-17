@@ -1,3 +1,4 @@
+using NrealEventSample.Demo;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,7 +9,9 @@ namespace NrealEventSample
         [SerializeField] private ParticleSystem _particleSystem;
         [SerializeField] private Texture2D _buttonTexture;
         [SerializeField] private EventTrigger _eventTrigger;
-        [SerializeField] private float _magnification = 0.5f;
+        [SerializeField] private float _hoverMagnification = 0.5f;
+        [SerializeField] private float _clickMagnification = 0.6f;
+        [SerializeField] private ParticleSystemController _particleSystemController;
 
         private void Start()
         {
@@ -21,15 +24,16 @@ namespace NrealEventSample
         {
             EventTrigger.Entry clickEntry = new EventTrigger.Entry();
             clickEntry.eventID = EventTriggerType.PointerClick;
-            clickEntry.callback.AddListener(_ => { Debug.Log("click"); });
-            _eventTrigger.triggers.Add(clickEntry);
-            
-            EventTrigger.Entry enterEntry = new EventTrigger.Entry();
-            clickEntry.eventID = EventTriggerType.PointerEnter;
             clickEntry.callback.AddListener(_ =>
             {
-                _particleSystem.ApplyRandomVelocity(_magnification);
+                _particleSystemController.ApplyNext();
+                _particleSystem.ApplyRandomVelocity(_hoverMagnification * 1.2f);
             });
+            _eventTrigger.triggers.Add(clickEntry);
+
+            EventTrigger.Entry enterEntry = new EventTrigger.Entry();
+            enterEntry.eventID = EventTriggerType.PointerEnter;
+            enterEntry.callback.AddListener(_ => { _particleSystem.ApplyRandomVelocity(_hoverMagnification); });
             _eventTrigger.triggers.Add(enterEntry);
         }
 

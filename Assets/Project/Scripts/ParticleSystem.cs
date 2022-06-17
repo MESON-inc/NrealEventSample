@@ -161,7 +161,7 @@ namespace NrealEventSample
             _shader.Dispatch(_updateKernelIndex, _particleCount / 8, 1, 1);
         }
 
-        private void UpdateParticleData(int? targetCount = null)
+        public void UpdateParticleData(int? targetCount = null)
         {
             int particleCount = targetCount ?? _particleCount;
             
@@ -231,6 +231,19 @@ namespace NrealEventSample
             }
 
             UpdateParticleData(_textPositions.Count);
+        }
+        
+        public void ApplyRandomVelocity(float magnification)
+        {
+            for (int i = 0; i < _particleData.Length; i++)
+            {
+                ParticleData data = _particleData[i];
+                data.activateTypes = (uint)(ActivateType.velocity);
+                data.velocity = Random.insideUnitSphere * magnification;
+                _particleData[i] = data;
+            }
+
+            UpdateParticleData();
         }
     }
 }
