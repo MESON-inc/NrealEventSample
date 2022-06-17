@@ -8,6 +8,7 @@ namespace NrealEventSample
         [SerializeField] private ParticleSystem _particleSystem;
         [SerializeField] private Texture2D _buttonTexture;
         [SerializeField] private EventTrigger _eventTrigger;
+        [SerializeField] private float _magnification = 0.5f;
 
         private void Start()
         {
@@ -25,7 +26,10 @@ namespace NrealEventSample
             
             EventTrigger.Entry enterEntry = new EventTrigger.Entry();
             clickEntry.eventID = EventTriggerType.PointerEnter;
-            clickEntry.callback.AddListener(_ => { Debug.Log("enter"); });
+            clickEntry.callback.AddListener(_ =>
+            {
+                _particleSystem.ApplyRandomVelocity(_magnification);
+            });
             _eventTrigger.triggers.Add(enterEntry);
         }
 

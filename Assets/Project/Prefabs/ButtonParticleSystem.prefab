@@ -160,15 +160,15 @@ MonoBehaviour:
   _shader: {fileID: 7200000, guid: 1b7e726077a5e2142bc3c20b4389c271, type: 3}
   _material: {fileID: 2100000, guid: 24689329818422249b07a9204a62246a, type: 2}
   _stickDistance: 1
-  _stickForce: 300
-  _attentionForce: 200
-  _attentionSpeed: 10
-  _suppress: 4
+  _stickForce: 50
+  _attentionForce: 50
+  _attentionSpeed: 1
+  _suppress: 0.3
   _threshold: 0.1
   _targetTransform: {fileID: 3462946299236053128}
   _areaSize: {x: 0.3, y: 0.075}
-  _magnification: 5
-  _distribution: 1
+  _magnification: 0.2
+  _distribution: 0.3
   _fixedDeltaTime: 0.016
   _particleCount: 10000
   _particleMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
@@ -189,3 +189,4 @@ MonoBehaviour:
   _particleSystem: {fileID: 3462946299236053131}
   _buttonTexture: {fileID: 2800000, guid: 004fba03c5926c54ea703d80879dcc67, type: 3}
   _eventTrigger: {fileID: 1512285567}
+  _magnification: 0.5
