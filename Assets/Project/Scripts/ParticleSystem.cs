@@ -39,6 +39,12 @@ namespace NrealEventSample
         [SerializeField] private Color _particleColor = new Color(0.123f, 0.873f, 0.9333f, 1f);
         [SerializeField] private float _particleScale = 0.01f;
 
+        public Vector2 AreaSize
+        {
+            get => _areaSize;
+            set => _areaSize = value;
+        }
+
         private int _initializeKernelIndex = -1;
         private int _updateKernelIndex = -1;
 
@@ -54,6 +60,8 @@ namespace NrealEventSample
 
         private void Awake()
         {
+            _shader = Instantiate(_shader);
+            _material = Instantiate(_material);
             _initializeKernelIndex = _shader.FindKernel("Initialize");
             _updateKernelIndex = _shader.FindKernel("Update");
             InitializeBuffers();
