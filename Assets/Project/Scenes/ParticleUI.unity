@@ -123,6 +123,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &104143285 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7845172358379328841, guid: 583014c58681b0d41bc9a20c9e0613a9, type: 3}
+  m_PrefabInstance: {fileID: 7845172358958152580}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f09356ca613a244a081e15e4f79829, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &201003033
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -507,6 +518,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7845172358379328841, guid: 583014c58681b0d41bc9a20c9e0613a9, type: 3}
+      propertyPath: _autoPlay
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7845172358379328841, guid: 583014c58681b0d41bc9a20c9e0613a9, type: 3}
       propertyPath: _messageMaker
       value: 
       objectReference: {fileID: 830354616}
@@ -596,7 +611,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3462946299236053128, guid: 58a6b2e2621358c4abca01fae2ffc02e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.366
+      value: -0.578
       objectReference: {fileID: 0}
     - target: {fileID: 3462946299236053128, guid: 58a6b2e2621358c4abca01fae2ffc02e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -604,11 +619,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3462946299236053128, guid: 58a6b2e2621358c4abca01fae2ffc02e, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071069
+      value: 0.8039884
       objectReference: {fileID: 0}
     - target: {fileID: 3462946299236053128, guid: 58a6b2e2621358c4abca01fae2ffc02e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.70710677
+      value: -0.5946451
       objectReference: {fileID: 0}
     - target: {fileID: 3462946299236053128, guid: 58a6b2e2621358c4abca01fae2ffc02e, type: 3}
       propertyPath: m_LocalRotation.y
@@ -620,7 +635,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3462946299236053128, guid: 58a6b2e2621358c4abca01fae2ffc02e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
+      value: -72.975
       objectReference: {fileID: 0}
     - target: {fileID: 3462946299236053128, guid: 58a6b2e2621358c4abca01fae2ffc02e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -634,5 +649,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: ButtonParticleSystem
       objectReference: {fileID: 0}
+    - target: {fileID: 8320334206547694228, guid: 58a6b2e2621358c4abca01fae2ffc02e, type: 3}
+      propertyPath: _particleSystemController
+      value: 
+      objectReference: {fileID: 104143285}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 58a6b2e2621358c4abca01fae2ffc02e, type: 3}
