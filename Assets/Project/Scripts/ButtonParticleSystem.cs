@@ -1,4 +1,5 @@
 using NrealEventSample.Demo;
+using NRKernal;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -28,12 +29,17 @@ namespace NrealEventSample
             {
                 _particleSystemController.ApplyNext();
                 _particleSystem.ApplyRandomVelocity(_hoverMagnification * 1.2f);
+                NRInput.TriggerHapticVibration(0.2f, 200f, 0.8f);
             });
             _eventTrigger.triggers.Add(clickEntry);
 
             EventTrigger.Entry enterEntry = new EventTrigger.Entry();
             enterEntry.eventID = EventTriggerType.PointerEnter;
-            enterEntry.callback.AddListener(_ => { _particleSystem.ApplyRandomVelocity(_hoverMagnification); });
+            enterEntry.callback.AddListener(_ =>
+            {
+                _particleSystem.ApplyRandomVelocity(_hoverMagnification);
+                NRInput.TriggerHapticVibration(0.1f, 200f, 0.8f);
+            });
             _eventTrigger.triggers.Add(enterEntry);
         }
 
