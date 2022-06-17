@@ -27,7 +27,7 @@ namespace NrealEventSample
         [SerializeField] private float _suppress = 4.0f;
         [SerializeField] private float _threshold = 0.1f;
         [SerializeField] private Transform _targetTransform;
-        [SerializeField] private float _areaSize = 0.5f;
+        [SerializeField] private Vector2 _areaSize = new Vector2(1.2f, 0.6f);
         [SerializeField] private float _magnification = 5.0f;
         [SerializeField] private float _distribution = 1f;
         [SerializeField] private float _fixedDeltaTime = 0.016f;
@@ -49,8 +49,6 @@ namespace NrealEventSample
         private ParticleData[] _particleData;
 
         private bool _running = false;
-
-        private float _ratio = 1f;
 
         #region ### ------------------------------ MonoBehaviour ------------------------------ ###
 
@@ -84,7 +82,7 @@ namespace NrealEventSample
 
             Gizmos.matrix = _targetTransform.localToWorldMatrix;
             
-            Gizmos.DrawWireCube(Vector3.zero, new Vector3(_areaSize, 0, _areaSize * _ratio));
+            Gizmos.DrawWireCube(Vector3.zero, new Vector3(_areaSize.x, 0, _areaSize.y));
 
             Gizmos.matrix = tmp;
         }
@@ -199,13 +197,11 @@ namespace NrealEventSample
 
             TextBufferMaker.Make(texture, 0, ref _textPositions, _threshold);
             
-            _ratio = texture.height / (float)texture.width;
-
             for (int i = 0; i < _textPositions.Count; i++)
             {
                 Vector4 p = _textPositions[i];
-                p.x *= _areaSize;
-                p.z *= _areaSize * _ratio;
+                p.x *= _areaSize.x;
+                p.z *= _areaSize.y;
 
                 ParticleData px = new ParticleData
                 {
