@@ -29,6 +29,7 @@ namespace NrealEventSample
         [SerializeField] private Transform _targetTransform;
         [SerializeField] private float _areaSize = 0.5f;
         [SerializeField] private float _magnification = 5.0f;
+        [SerializeField] private float _fixedDeltaTime = 0.016f;
 
         [Header("==== Setting for particle ====")] [SerializeField]
         private int _particleCount = 120_000;
@@ -112,7 +113,7 @@ namespace NrealEventSample
 
             for (int i = 0; i < particles.Length; ++i)
             {
-                Vector3 pos = Random.insideUnitSphere * 2.5f + Vector3.up * 5f;
+                Vector3 pos = _targetTransform.position + Random.insideUnitSphere * 2.5f;
 
                 Vector4 color = new Vector4(_particleColor.r, _particleColor.g, _particleColor.b, _particleColor.a);
 
@@ -139,7 +140,7 @@ namespace NrealEventSample
         private void UpdateParticles()
         {
             _shader.SetFloat("_Time", Time.time);
-            _shader.SetFloat("_DeltaTime", Time.deltaTime);
+            _shader.SetFloat("_DeltaTime", _fixedDeltaTime);
             _shader.SetFloat("_StickDistance", _stickDistance);
             _shader.SetFloat("_StickForce", _stickForce);
             _shader.SetFloat("_AttentionForce", _attentionForce);

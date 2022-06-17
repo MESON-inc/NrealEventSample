@@ -52,10 +52,7 @@ void Update(uint id : SV_DispatchThreadID)
     float limitSpeed = lerp(_StickForce, _AttentionForce, ratio) * _DeltaTime;
     float cappedSpeed = min(limitSpeed, abs(deltaSpeed));
 
-    p.velocity += sign(deltaSpeed) * cappedSpeed * dir;
-
-    // float correction = dot(dir, length(p.velocity));
-    // p.velocity *= correction;
+    p.velocity += sign(deltaSpeed) * cappedSpeed * dir * _DeltaTime;
     p.velocity *= 0.99;
 
     if (length(p.velocity) < _Suppress)

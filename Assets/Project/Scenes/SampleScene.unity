@@ -417,14 +417,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4861944413908911654, guid: 98c80cefaed293b4d88c6d5b6693f99e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4861944413908911654, guid: 98c80cefaed293b4d88c6d5b6693f99e, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 4861944414480460605, guid: 98c80cefaed293b4d88c6d5b6693f99e, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -468,14 +460,6 @@ PrefabInstance:
     - target: {fileID: 4861944414480460605, guid: 98c80cefaed293b4d88c6d5b6693f99e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4861944414480460606, guid: 98c80cefaed293b4d88c6d5b6693f99e, type: 3}
-      propertyPath: _areaSize
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4861944414480460606, guid: 98c80cefaed293b4d88c6d5b6693f99e, type: 3}
-      propertyPath: _particleScale
-      value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: 4861944414480460607, guid: 98c80cefaed293b4d88c6d5b6693f99e, type: 3}
       propertyPath: m_Name

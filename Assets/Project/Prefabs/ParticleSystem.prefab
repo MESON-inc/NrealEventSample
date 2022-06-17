@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4861944413908911655}
   m_LocalRotation: {x: -0.7071065, y: -0, z: -0, w: 0.7071072}
-  m_LocalPosition: {x: 0, y: 2.27, z: -2.41}
+  m_LocalPosition: {x: 0, y: -0, z: 10.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -78,16 +78,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _shader: {fileID: 7200000, guid: 1b7e726077a5e2142bc3c20b4389c271, type: 3}
   _material: {fileID: 2100000, guid: 24689329818422249b07a9204a62246a, type: 2}
-  _stickDistance: 0.2
-  _stickForce: 1000
-  _attentionForce: 20
+  _stickDistance: 1
+  _stickForce: 500
+  _attentionForce: 400
   _attentionSpeed: 30
-  _suppress: 2
+  _suppress: 4
   _threshold: 0.1
   _targetTransform: {fileID: 4861944413908911654}
-  _areaSize: 10
-  _magnification: 50
+  _areaSize: 5
+  _magnification: 15
+  _fixedDeltaTime: 0.032
   _particleCount: 120000
   _particleMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   _particleColor: {r: 0.123, g: 0.873, b: 0.9333, a: 1}
-  _particleScale: 0.025
+  _particleScale: 0.02
