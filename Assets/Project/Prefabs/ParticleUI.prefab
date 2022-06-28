@@ -47,6 +47,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _distance: 1.5
   _speed: 2
+  _fixOnHorizontal: 0
+  _offset: {x: 0, y: -0.1, z: 0}
 --- !u!1001 &232366533674538580
 PrefabInstance:
   m_ObjectHideFlags: 0

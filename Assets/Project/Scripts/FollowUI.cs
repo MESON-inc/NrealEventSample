@@ -6,6 +6,8 @@ namespace NrealEventSample
     {
         [SerializeField] private float _distance = 1.5f;
         [SerializeField] private float _speed = 2f;
+        [SerializeField] private bool _fixOnHorizontal = false;
+        [SerializeField] private Vector3 _offset = new Vector3(0, -0.1f, 0);
         
         private Transform _cameraTransform;
 
@@ -17,12 +19,24 @@ namespace NrealEventSample
         private void Update()
         {
             float t = Time.deltaTime * _speed;
+
+            Vector3 forward = GetForward();
+            Vector3 target = (forward * _distance) + _offset;
             
-            Vector3 forward = _cameraTransform.forward;
             transform.forward = Vector3.Lerp(transform.forward, forward, t);
-            
-            Vector3 target = forward * _distance;
             transform.position = Vector3.Lerp(transform.position, target, t);
+        }
+
+        private Vector3 GetForward()
+        {
+            Vector3 forward = _cameraTransform.forward;
+            
+            if (!_fixOnHorizontal)
+            {
+                return forward;
+            }
+            
+            return Vector3.ProjectOnPlane(forward, Vector3.up).normalized;
         }
     }
 }
