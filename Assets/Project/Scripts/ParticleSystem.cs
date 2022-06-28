@@ -60,7 +60,6 @@ namespace NrealEventSample
 
         private void Awake()
         {
-            _shader = Instantiate(_shader);
             _material = Instantiate(_material);
             _initializeKernelIndex = _shader.FindKernel("Initialize");
             _updateKernelIndex = _shader.FindKernel("Update");
@@ -141,11 +140,6 @@ namespace NrealEventSample
             }
 
             _particleBuffer.SetData(particles);
-
-            _shader.SetBuffer(_updateKernelIndex, "_ParticleBuffer", _particleBuffer);
-            _shader.SetBuffer(_initializeKernelIndex, "_ParticleBuffer", _particleBuffer);
-
-            _material.SetBuffer("_ParticleBuffer", _particleBuffer);
         }
 
         private void UpdateParticles()
@@ -158,6 +152,7 @@ namespace NrealEventSample
             _shader.SetFloat("_AttentionSpeed", _attentionSpeed);
             _shader.SetFloat("_Suppress", _suppress);
             _shader.SetMatrix("_TargetMatrix", _targetTransform.localToWorldMatrix);
+            _shader.SetBuffer(_updateKernelIndex, "_ParticleBuffer", _particleBuffer);
             _shader.Dispatch(_updateKernelIndex, _particleCount / 8, 1, 1);
         }
 
@@ -168,14 +163,15 @@ namespace NrealEventSample
             _particleDataBuffer.SetData(_particleData);
 
             _shader.SetInt("_ParticleCount", particleCount);
-
             _shader.SetBuffer(_initializeKernelIndex, "_ParticleDataBuffer", _particleDataBuffer);
-
+            _shader.SetBuffer(_initializeKernelIndex, "_ParticleBuffer", _particleBuffer);
             _shader.Dispatch(_initializeKernelIndex, _particleCount / 8, 1, 1);
         }
 
         private void DrawParticles()
         {
+            _material.SetBuffer("_ParticleBuffer", _particleBuffer);
+            
             Graphics.DrawMeshInstancedIndirect(
                 _particleMesh,
                 0,
