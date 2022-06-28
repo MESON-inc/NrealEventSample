@@ -1,8 +1,8 @@
 #pragma kernel Update
 #pragma kernel Initialize
 
-#include "Include/Particle.cginc"
-#include "Include/NoiseUtils.cginc"
+#include "../Include/Particle.cginc"
+#include "../Include/NoiseUtils.cginc"
 
 #define FLT_MIN 1.175494351e-38
 
