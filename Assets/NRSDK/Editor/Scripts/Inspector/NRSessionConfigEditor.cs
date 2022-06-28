@@ -43,7 +43,7 @@ namespace NRKernal
 
 			// EditorGUILayout.PropertyField(ProjectConfig);
 			NRProjectConfig projectConfig = NRProjectConfigHelper.GetProjectConfig();
-			NRProjectConfigEditor.DrawTargetDevice(projectConfig);
+			//NRProjectConfigEditor.DrawUniqueProjectConfig(projectConfig);
 			EditorGUILayout.Space();
 
 			EditorGUILayout.PropertyField(PlaneFindingMode);
@@ -57,6 +57,12 @@ namespace NRKernal
 
 			// Apply values to the target
 			serializedObject.ApplyModifiedProperties();
+
+			//Provide link to the unique NRProjectConfig
+			if (GUILayout.Button("Open NRProjectConfig"))
+			{
+				Selection.activeObject = sessionConfig.GlobalProjectConfig;
+			}
 		}
 	}
 }

@@ -57,6 +57,14 @@ namespace NRKernal
         [Tooltip("Donot change this manually, it always refer to the NRProjectConfig whick is global unique.")]
         NRProjectConfig ProjectConfig;
 
+        public NRProjectConfig GlobalProjectConfig
+        {
+            get
+            {
+                return ProjectConfig;
+            }
+        }
+
         /// <summary> ValueType check if two NRSessionConfig objects are equal. </summary>
         /// <param name="other"> .</param>
         /// <returns>
