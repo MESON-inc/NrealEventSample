@@ -22,6 +22,10 @@ namespace NRKernal.NRExamples
     {
         [SerializeField] private Button m_PlayButton;
         [SerializeField] private NRPreviewer m_Previewer;
+        [SerializeField] private Slider m_SliderMic;
+        [SerializeField] private Text m_TextMic;
+        [SerializeField] private Slider m_SliderApp;
+        [SerializeField] private Text m_TextApp;
 
         public BlendMode blendMode = BlendMode.Blend;
         public ResolutionLevel resolutionLevel;
@@ -50,6 +54,44 @@ namespace NRKernal.NRExamples
 
         void Awake()
         {
+            if (m_SliderMic != null)
+            {
+                m_SliderMic.maxValue = 10.0f;
+                m_SliderMic.minValue = 0.1f;
+                m_SliderMic.value = 1;
+                m_SliderMic.onValueChanged.AddListener(OnSlideMicValueChange);
+            }
+
+            if (m_SliderApp != null)
+            {
+                m_SliderApp.maxValue = 10.0f;
+                m_SliderApp.minValue = 0.1f;
+                m_SliderApp.value = 1;
+                m_SliderApp.onValueChanged.AddListener(OnSlideAppValueChange);
+            }
+
+            RefreshUIState();
+        }
+
+        void OnSlideMicValueChange(float val)
+        {
+            if (m_VideoCapture != null)
+            {
+                VideoEncoder encoder = m_VideoCapture.GetContext().GetEncoder() as VideoEncoder;
+                if (encoder != null)
+                    encoder.AdjustVolume(RecorderIndex.REC_MIC, val);
+            }
+            RefreshUIState();
+        }
+
+        void OnSlideAppValueChange(float val)
+        {
+            if (m_VideoCapture != null)
+            {
+                VideoEncoder encoder = m_VideoCapture.GetContext().GetEncoder() as VideoEncoder;
+                if (encoder != null)
+                    encoder.AdjustVolume(RecorderIndex.REC_APP, val);
+            }
             RefreshUIState();
         }
 
@@ -95,6 +137,11 @@ namespace NRKernal.NRExamples
         {
             bool flag = m_VideoCapture == null || !m_VideoCapture.IsRecording;
             m_PlayButton.GetComponent<Image>().color = flag ? Color.red : Color.green;
+
+            if (m_TextMic != null && m_SliderMic != null)
+                m_TextMic.text = m_SliderMic.value.ToString();
+            if (m_TextApp != null && m_SliderApp != null)
+                m_TextApp.text = m_SliderApp.value.ToString();
         }
 
         /// <summary> Starts video capture. </summary>
@@ -168,7 +215,9 @@ namespace NRKernal.NRExamples
             }
 
             NRDebugger.Info("Started Video Capture Mode!");
-            m_VideoCapture.StartRecordingAsync(VideoSavePath, OnStartedRecordingVideo);
+            float volumeMic = m_SliderMic != null ? m_SliderMic.value : NativeConstants.RECORD_VOLUME_MIC;
+            float volumeApp = m_SliderApp != null ? m_SliderApp.value : NativeConstants.RECORD_VOLUME_APP;
+            m_VideoCapture.StartRecordingAsync(VideoSavePath, OnStartedRecordingVideo, volumeMic, volumeApp);
             // Set preview texture.
             m_Previewer.SetData(m_VideoCapture.PreviewTexture, true);
         }

@@ -23,14 +23,14 @@ namespace NRKernal
         /// <summary> The model anchor. </summary>
         public Transform modelAnchor;
 
-        /// <summary> The verify y coordinate angle. </summary>
-        private float m_VerifyYAngle;
         /// <summary> True if is enabled, false if not. </summary>
         private bool m_IsEnabled;
         /// <summary> True if is 6dof, false if not. </summary>
         private bool m_Is6dof;
         /// <summary> The default local offset. </summary>
         private Vector3 m_DefaultLocalOffset;
+        /// <summary> Cache world matrix. </summary>
+        private Matrix4x4 m_CachedWorldMatrix = Matrix4x4.identity;
 
         /// <summary> Gets the camera center. </summary>
         /// <value> The camera center. </value>
@@ -63,6 +63,12 @@ namespace NRKernal
             NRInput.OnControllerStatesUpdated -= OnControllerStatesUpdated;
         }
 
+        private void Start()
+        {            
+            m_Is6dof = NRInput.GetControllerAvailableFeature(ControllerAvailableFeature.CONTROLLER_AVAILABLE_FEATURE_POSITION)
+                && NRInput.GetControllerAvailableFeature(ControllerAvailableFeature.CONTROLLER_AVAILABLE_FEATURE_ROTATION);
+        }
+
         /// <summary> Executes the 'controller states updated' action. </summary>
         private void OnControllerStatesUpdated()
         {
@@ -86,26 +92,30 @@ namespace NRKernal
         /// <summary> Track pose. </summary>
         private void TrackPose()
         {
-            m_Is6dof = NRInput.GetControllerAvailableFeature(ControllerAvailableFeature.CONTROLLER_AVAILABLE_FEATURE_POSITION)
-                && NRInput.GetControllerAvailableFeature(ControllerAvailableFeature.CONTROLLER_AVAILABLE_FEATURE_ROTATION);
-
             Pose poseInAPIWorld = new Pose(NRInput.GetPosition(defaultHandEnum), NRInput.GetRotation(defaultHandEnum));
-            Pose poseInUnityWorld = ConversionUtility.ApiWorldToUnityWorld(poseInAPIWorld);
-            Vector3 cameraWorldUp = NRFrame.GetWorldMatrixFromUnityToNative().MultiplyVector(Vector3.up);
-            poseInUnityWorld.rotation = Quaternion.AngleAxis(m_VerifyYAngle, cameraWorldUp) * poseInUnityWorld.rotation;
+            Pose pose = ApplyWorldMatrix(poseInAPIWorld);
+            transform.position = m_Is6dof ? pose.position : CameraCenter.TransformPoint(m_DefaultLocalOffset);
+            transform.rotation = pose.rotation;
+        }
 
-            transform.position = m_Is6dof ? poseInUnityWorld.position : CameraCenter.TransformPoint(m_DefaultLocalOffset);
-            transform.rotation = poseInUnityWorld.rotation;
+        /// <summary> Apply world transform. </summary>
+        private Pose ApplyWorldMatrix(Pose pose)
+        {
+            var objectMatrix = ConversionUtility.GetTMatrix(pose.position, pose.rotation);
+            var object_in_world = m_CachedWorldMatrix * objectMatrix;
+            return new Pose(ConversionUtility.GetPositionFromTMatrix(object_in_world),
+                ConversionUtility.GetRotationFromTMatrix(object_in_world));
         }
 
         /// <summary> Executes the 'recentering' action. </summary>
         private void OnRecentering()
         {
-            Matrix4x4 cameraWorldMatrix = NRFrame.GetWorldMatrixFromUnityToNative();
-            Vector3 cameraWorldUp = cameraWorldMatrix.MultiplyVector(Vector3.up);
-            Vector3 cameraWorldFoward = cameraWorldMatrix.MultiplyVector(Vector3.forward);
-            Vector3 horizontalFoward = Vector3.ProjectOnPlane(CameraCenter.forward, cameraWorldUp);
-            m_VerifyYAngle = Mathf.Sign(Vector3.Cross(cameraWorldFoward, horizontalFoward).y) * Vector3.Angle(horizontalFoward, cameraWorldFoward);
+            Plane horizontal_plane = new Plane(Vector3.up, Vector3.zero);
+            Vector3 horizontalFoward = horizontal_plane.ClosestPointOnPlane(CameraCenter.forward).normalized;
+            Quaternion horizontalRot = Quaternion.LookRotation(horizontalFoward, Vector3.up);
+
+            Vector3 position = m_Is6dof ? transform.position : Vector3.zero;
+            m_CachedWorldMatrix = ConversionUtility.GetTMatrix(position, horizontalRot);
         }
     }
 }

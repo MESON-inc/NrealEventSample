@@ -23,6 +23,20 @@ namespace NRKernal
     public delegate void HMDPoseTrackerModeChangeEvent(NRHMDPoseTracker.TrackingType origin, NRHMDPoseTracker.TrackingType target);
     public delegate void OnTrackingModeChanged(NRHMDPoseTracker.TrackingModeChangedResult result);
 
+
+    /// <summary>
+    /// Interface of external slam provider.
+    /// </summary>
+    public interface IExternSlamProvider
+    {
+        /// <summary>
+        /// Get head pose at the time of timeStamp
+        /// </summary>
+        /// <param name="timeStamp"> The specified time. </param>
+        /// <returns></returns>
+        Pose GetHeadPoseAtTime(UInt64 timeStamp);
+    }
+    
     /// <summary>
     /// HMDPoseTracker update the infomations of pose tracker. This component is used to initialize
     /// the camera parameter, update the device posture, In addition, application can change
@@ -60,6 +74,11 @@ namespace NRKernal
             /// Track nothing.
             /// </summary>
             Tracking0Dof = 2,
+
+            /// <summary>
+            /// Track nothing. Use rotation to make tracking smoothly.
+            /// </summary>
+            Tracking0DofStable = 3
         }
 
         /// <summary> Type of the tracking. </summary>
@@ -83,6 +102,7 @@ namespace NRKernal
         public bool UseRelative = false;
         /// <summary> The last reason. </summary>
         private LostTrackingReason m_LastReason = LostTrackingReason.INITIALIZING;
+        private IExternSlamProvider m_externSlamProvider = null;
 
         /// <summary> The left camera. </summary>
         public Camera leftCamera;
@@ -200,6 +220,13 @@ namespace NRKernal
                         else
                             return TrackingType.Tracking0Dof;
                     }
+                case TrackingType.Tracking0DofStable:
+                    {
+                        if (NRDevice.Subsystem.IsFeatureSupported(NRSupportedFeature.NR_FEATURE_TRACKING_3DOF))
+                            return TrackingType.Tracking0DofStable;
+                        else
+                            return TrackingType.Tracking0Dof;
+                    }
             }
             return mode;
         }
@@ -249,7 +276,8 @@ namespace NRKernal
 
         private void OnApplicationPause(bool pause)
         {
-            NRDebugger.Info("[NRHMDPoseTracker] OnApplicationPause : pause={0}, headPos={1}", pause, NRFrame.HeadPose.ToString("F2"));
+            NRDebugger.Info("[NRHMDPoseTracker] OnApplicationPause : pause={0}, headPos={1}, cachedWorldMatrix={2}",
+                pause, NRFrame.HeadPose.ToString("F2"), cachedWorldMatrix.ToString());
             if (pause)
             {
                 this.CacheWorldMatrix();
@@ -326,6 +354,24 @@ namespace NRKernal
             });
         }
 
+        /// <summary> Change to 3 degree of freedom. </summary>
+        /// <param name="OnModeChanged"> The mode changed call back and return the result.</param>
+        /// <param name="autoAdapt"> Auto trackingType adaption based on supported features on current device.</param>
+        public bool ChangeTo0DofStable(OnTrackingModeChanged OnModeChanged, bool autoAdapt = false)
+        {
+            var trackType = TrackingType.Tracking0DofStable;
+            if (autoAdapt)
+                trackType = AdaptTrackingType(trackType);
+            Pose cachePose = GetCachPose();
+            return ChangeMode(trackType, (NRHMDPoseTracker.TrackingModeChangedResult result) =>
+            {
+                if (result.success)
+                    CacheWorldMatrix(cachePose);
+                if (OnModeChanged != null)
+                    OnModeChanged(result);
+            });
+        }
+
         private Matrix4x4 cachedWorldMatrix = Matrix4x4.identity;
         /// <summary> Cache the world matrix. </summary>
         public void CacheWorldMatrix()
@@ -340,8 +386,9 @@ namespace NRKernal
             Plane horizontal_plane = new Plane(Vector3.up, Vector3.zero);
             Vector3 forward_use_gravity = horizontal_plane.ClosestPointOnPlane(pose.forward).normalized;
             Quaternion rotation_use_gravity = Quaternion.LookRotation(forward_use_gravity, Vector3.up);
-            // NRDebugger.Info("CacheWorldMatrix Adjust : pos={0}, {1}", pose.position.ToString("F2"), rotation_use_gravity.ToString("F2"));
             cachedWorldMatrix = ConversionUtility.GetTMatrix(pose.position, rotation_use_gravity);
+            NRDebugger.Info("CacheWorldMatrix Adjust : pos={0}, {1}, cachedWorldMatrix={2}", 
+                pose.position.ToString("F2"), rotation_use_gravity.ToString("F2"), cachedWorldMatrix.ToString());
         }
 
         /// <summary> 
@@ -441,10 +488,52 @@ namespace NRKernal
             NRDebugger.Info("[NRHMDPoseTracker] Initialized success.");
         }
 
+        public void RegisterSlamProvider(IExternSlamProvider provider)
+        {
+            NRDebugger.Info("[NRHMDPoseTracker] RegisterSlamProvider");
+            m_externSlamProvider = provider;
+        }
+
+        public bool GetHeadPoseByTimeInUnityWorld(ref Pose headPose, ulong timeStamp)
+        {
+            var nativeHeadPose = Pose.identity;
+            if (m_TrackingType == TrackingType.Tracking0Dof)
+            {
+                nativeHeadPose = HeadRotFromCenter;
+            }
+            else
+            {
+                if (m_externSlamProvider != null)
+                {
+                    nativeHeadPose = m_externSlamProvider.GetHeadPoseAtTime(timeStamp);
+                }
+                else
+                {
+                    if (timeStamp == NRFrame.CurrentPoseTimeStamp)
+                    {
+                        nativeHeadPose = NRFrame.HeadPose;
+                    }
+                    else
+                    {
+                        if (!NRFrame.GetHeadPoseByTime(ref nativeHeadPose, timeStamp))
+                            return false;
+                    }
+                }
+                if (m_TrackingType == TrackingType.Tracking0DofStable)
+                {
+                    nativeHeadPose.rotation = HeadRotFromCenter.rotation * nativeHeadPose.rotation;
+                }
+            }
+            headPose = nativeHeadPose;
+            headPose = cachedWorldMatrix.Equals(Matrix4x4.identity) ? headPose : ApplyWorldMatrix(headPose);
+            
+            return true;
+        }
+
         /// <summary> Updates the pose by tracking type. </summary>
         private void UpdatePoseByTrackingType()
         {
-            Pose headPose;
+            Pose headPose = Pose.identity;
 #if USING_XR_SDK && !UNITY_EDITOR
             Pose centerPose;
             GetNodePoseData(XRNode.Head, out headPose);
@@ -455,56 +544,31 @@ namespace NRKernal
             centerAnchor.localPosition = centerPose.position;
             centerAnchor.localRotation = centerPose.rotation;
 #else
-            headPose = m_TrackingType == TrackingType.Tracking0Dof ? HeadRotFromCenter : NRFrame.HeadPose;
-            headPose = cachedWorldMatrix.Equals(Matrix4x4.identity) ? headPose : ApplyWorldMatrix(headPose);
 
+            if (!GetHeadPoseByTimeInUnityWorld(ref headPose, NRFrame.CurrentPoseTimeStamp))
+                return;
             // NRDebugger.Info("[NRHMDPoseTracker] UpdatePose: trackType={2}, pos={0} --> {1}", NRFrame.HeadPose.ToString("F2"), headPose.ToString("F2"), m_TrackingType);
 #endif
-            switch (m_TrackingType)
+
+            if (UseRelative)
             {
-                case TrackingType.Tracking6Dof:
-                    if (UseRelative)
-                    {
-                        transform.localRotation = headPose.rotation;
-                        transform.localPosition = headPose.position;
-                    }
-                    else
-                    {
-                        transform.rotation = headPose.rotation;
-                        transform.position = headPose.position;
-                    }
-                    break;
-                case TrackingType.Tracking3Dof:
-                case TrackingType.Tracking0Dof:
-                    if (UseRelative)
-                    {
-                        transform.localRotation = headPose.rotation;
-#if UNITY_EDITOR
-                        transform.localPosition = Vector3.zero;
-#else
-                        transform.localPosition = headPose.position;
-#endif
-                    }
-                    else
-                    {
-                        transform.rotation = headPose.rotation;
-#if UNITY_EDITOR
-                        transform.position = Vector3.zero;
-#else
-                        transform.position = headPose.position;
-#endif
-                    }
-                    break;
-                default:
-                    break;
+                transform.localRotation = headPose.rotation;
+                transform.localPosition = headPose.position;
+            }
+            else
+            {
+                transform.rotation = headPose.rotation;
+                transform.position = headPose.position;
             }
         }
 
         /// <summary> Check hmd pose state. </summary>
         private void CheckHMDPoseState()
         {
-            if (NRFrame.SessionStatus != SessionState.Running || 
-                TrackingMode == TrackingType.Tracking0Dof || IsTrackModeChanging)
+            if (NRFrame.SessionStatus != SessionState.Running 
+                || TrackingMode == TrackingType.Tracking0Dof
+                || TrackingMode == TrackingType.Tracking0DofStable
+                || IsTrackModeChanging)
             {
                 return;
             }
