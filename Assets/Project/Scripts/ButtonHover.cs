@@ -6,10 +6,17 @@ public class ButtonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private Animator _animator;
     private static readonly int _hoverId = Animator.StringToHash("Hover");
 
+    #region ### ------------------------------ MonoBehaviour ------------------------------ ###
+
     private void Awake()
     {
         _animator = GetComponent<Animator>();
     }
+
+    #endregion ### ------------------------------ MonoBehaviour ------------------------------ ###
+
+
+    #region ### ------------------------------ Public methods ------------------------------ ###
 
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -20,4 +27,6 @@ public class ButtonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         _animator.SetBool(_hoverId, false);
     }
+
+    #endregion ### ------------------------------ Public methods ------------------------------ ###
 }
