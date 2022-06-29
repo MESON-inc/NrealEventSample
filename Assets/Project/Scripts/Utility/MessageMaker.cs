@@ -8,6 +8,11 @@ namespace NrealEventSample
         [SerializeField] private Camera _camera;
         [SerializeField] private TMP_Text _text;
 
+        /// <summary>
+        /// Make a message texture by message strings.
+        /// </summary>
+        /// <param name="message">A message to show.</param>
+        /// <returns>A message backed texture.</returns>
         public Texture2D Make(string message)
         {
             _text.text = message;

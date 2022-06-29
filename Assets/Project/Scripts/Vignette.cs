@@ -6,6 +6,8 @@ namespace WorkRoom.Effects
     {
         [SerializeField] private Material _material = null;
 
+        #region ### ------------------------------ MonoBehaviour ------------------------------ ###
+
         private void Awake()
         {
             _material = Instantiate(_material);
@@ -15,5 +17,7 @@ namespace WorkRoom.Effects
         {
             Graphics.Blit(source, destination, _material);
         }
+
+        #endregion ### ------------------------------ MonoBehaviour ------------------------------ ###
     }
 }

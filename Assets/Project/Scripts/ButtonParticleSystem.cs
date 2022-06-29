@@ -14,12 +14,18 @@ namespace NrealEventSample
         [SerializeField] private float _clickMagnification = 0.6f;
         [SerializeField] private ParticleSystemController _particleSystemController;
 
+        #region ### ------------------------------ MonoBehaviour ------------------------------ ###
+
         private void Start()
         {
             SetupEvent();
 
             PlayParticle();
         }
+
+        #endregion ### ------------------------------ MonoBehaviour ------------------------------ ###
+
+        #region ### ------------------------------ Private methods ------------------------------ ###
 
         private void SetupEvent()
         {
@@ -51,5 +57,7 @@ namespace NrealEventSample
             _particleSystem.SetTexture(_buttonTexture);
             _particleSystem.Play();
         }
+
+        #endregion ### ------------------------------ Private methods ------------------------------ ###
     }
 }
