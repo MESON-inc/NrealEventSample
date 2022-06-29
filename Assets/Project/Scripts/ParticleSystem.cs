@@ -18,6 +18,8 @@ namespace NrealEventSample
 
     public class ParticleSystem : MonoBehaviour
     {
+        #region ### ------------------------------ Serialize Fields ------------------------------ ###
+
         [SerializeField] private ComputeShader _shader;
         [SerializeField] private Material _material;
         [SerializeField] private float _stickDistance = 0.2f;
@@ -39,6 +41,10 @@ namespace NrealEventSample
         [SerializeField] private Color _particleColor = new Color(0.123f, 0.873f, 0.9333f, 1f);
         [SerializeField] private float _particleScale = 0.01f;
 
+        #endregion ### ------------------------------ Serialize Fields ------------------------------ ###
+
+        #region ### ------------------------------ Members ------------------------------ ###
+
         public Vector2 AreaSize
         {
             get => _areaSize;
@@ -56,6 +62,8 @@ namespace NrealEventSample
 
         private bool _running = false;
 
+        #endregion ### ------------------------------ Members ------------------------------ ###
+
         #region ### ------------------------------ MonoBehaviour ------------------------------ ###
 
         private void Awake()
@@ -70,7 +78,7 @@ namespace NrealEventSample
         private void Update()
         {
             if (!_running) return;
-            
+
             UpdateParticles();
             DrawParticles();
         }
@@ -88,13 +96,15 @@ namespace NrealEventSample
             Matrix4x4 tmp = Gizmos.matrix;
 
             Gizmos.matrix = _targetTransform.localToWorldMatrix;
-            
+
             Gizmos.DrawWireCube(Vector3.zero, new Vector3(_areaSize.x, 0, _areaSize.y));
 
             Gizmos.matrix = tmp;
         }
 
         #endregion ### ------------------------------ MonoBehaviour ------------------------------ ###
+
+        #region ### ------------------------------ Private methods ------------------------------ ###
 
         private void InitializeBuffers()
         {
@@ -129,7 +139,7 @@ namespace NrealEventSample
 
                 Particle p = new Particle
                 {
-                    active = 1,
+                    active = 0,
                     scale = _particleScale,
                     position = pos,
                     targetPosition = pos,
@@ -156,22 +166,10 @@ namespace NrealEventSample
             _shader.Dispatch(_updateKernelIndex, _particleCount / 8, 1, 1);
         }
 
-        public void UpdateParticleData(int? targetCount = null)
-        {
-            int particleCount = targetCount ?? _particleCount;
-            
-            _particleDataBuffer.SetData(_particleData);
-
-            _shader.SetInt("_ParticleCount", particleCount);
-            _shader.SetBuffer(_initializeKernelIndex, "_ParticleDataBuffer", _particleDataBuffer);
-            _shader.SetBuffer(_initializeKernelIndex, "_ParticleBuffer", _particleBuffer);
-            _shader.Dispatch(_initializeKernelIndex, _particleCount / 8, 1, 1);
-        }
-
         private void DrawParticles()
         {
             _material.SetBuffer("_ParticleBuffer", _particleBuffer);
-            
+
             Graphics.DrawMeshInstancedIndirect(
                 _particleMesh,
                 0,
@@ -185,22 +183,52 @@ namespace NrealEventSample
                 gameObject.layer);
         }
 
+        #endregion ### ------------------------------ Private methods ------------------------------ ###
+
+        #region ### ------------------------------ Public methods ------------------------------ ###
+
+        /// <summary>
+        /// Update particle data by ParticleData structures.
+        /// </summary>
+        /// <param name="targetCount">A number of the particle count that you want to update.</param>
+        public void UpdateParticleData(int? targetCount = null)
+        {
+            int particleCount = targetCount ?? _particleCount;
+
+            _particleDataBuffer.SetData(_particleData);
+
+            _shader.SetInt("_ParticleCount", particleCount);
+            _shader.SetBuffer(_initializeKernelIndex, "_ParticleDataBuffer", _particleDataBuffer);
+            _shader.SetBuffer(_initializeKernelIndex, "_ParticleBuffer", _particleBuffer);
+            _shader.Dispatch(_initializeKernelIndex, _particleCount / 8, 1, 1);
+        }
+
+        /// <summary>
+        /// Play this particle system. This method is invoked then the system will be running mode.
+        /// </summary>
         public void Play()
         {
             _running = true;
         }
 
+        /// <summary>
+        /// Stop this particle system.
+        /// </summary>
         public void Stop()
         {
             _running = false;
         }
 
+        /// <summary>
+        /// Set a texture that contains white or black pixel to show with particles.
+        /// </summary>
+        /// <param name="texture">A normal texture that you want to show.</param>
         public void SetTexture(Texture2D texture)
         {
             _textPositions.Clear();
 
             TextBufferMaker.Make(texture, 0, ref _textPositions, _threshold);
-            
+
             for (int i = 0; i < _textPositions.Count; i++)
             {
                 Vector4 p = _textPositions[i];
@@ -228,7 +256,12 @@ namespace NrealEventSample
 
             UpdateParticleData(_textPositions.Count);
         }
-        
+
+        /// <summary>
+        /// Apply random velocity to each particle.
+        /// This means that the system will show explosion effect.
+        /// </summary>
+        /// <param name="magnification"></param>
         public void ApplyRandomVelocity(float magnification)
         {
             for (int i = 0; i < _particleData.Length; i++)
@@ -241,5 +274,7 @@ namespace NrealEventSample
 
             UpdateParticleData();
         }
+
+        #endregion ### ------------------------------ Public methods ------------------------------ ###
     }
 }

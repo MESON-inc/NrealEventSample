@@ -5,6 +5,8 @@ namespace NrealEventSample.Demo
 {
     public class ParticleSystemController : MonoBehaviour
     {
+        #region ### ------------------------------ Serialize Fields ------------------------------ ###
+
         [SerializeField] private ParticleSystem _particleSystem;
         [SerializeField] private MessageMaker _messageMaker;
 
@@ -14,9 +16,15 @@ namespace NrealEventSample.Demo
             "Stone, electricity, computer. Humanity augments possibilities and choices via inventing and combining these technologies. MESON augments human experiences through driving the dynamics of XR, Metaverse, and Web3 technologies.",
         };
 
-        [SerializeField] private bool _autoPlay = true;
+        #endregion ### ------------------------------ Serialize Fields ------------------------------ ###
+
+        #region ### ------------------------------ Members ------------------------------ ###
 
         private int _index = 0;
+
+        #endregion ### ------------------------------ Members ------------------------------ ###
+
+        #region ### ------------------------------ MonoBehaviour ------------------------------ ###
 
         private IEnumerator Start()
         {
@@ -25,28 +33,27 @@ namespace NrealEventSample.Demo
             yield return new WaitForSeconds(1f);
 
             StartParticle();
+
+            yield return new WaitForSeconds(0.1f);
+
+            ApplyNext();
         }
 
+        #endregion ### ------------------------------ MonoBehaviour ------------------------------ ###
+
+        #region ### ------------------------------ Public methods ------------------------------ ###
+
+        /// <summary>
+        /// Start a particle system.
+        /// </summary>
         public void StartParticle()
         {
             _particleSystem.Play();
-
-            if (_autoPlay)
-            {
-                StartCoroutine(PlayLoop());
-            }
         }
 
-        private IEnumerator PlayLoop()
-        {
-            while (true)
-            {
-                ApplyNext();
-
-                yield return new WaitForSeconds(5f);
-            }
-        }
-
+        /// <summary>
+        /// Apply a message texture to transition to next.
+        /// </summary>
         public void ApplyNext()
         {
             Texture2D texture = _messageMaker.Make(_messages[_index]);
@@ -54,6 +61,8 @@ namespace NrealEventSample.Demo
 
             _index = (_index + 1) % _messages.Length;
         }
+
+        #endregion ### ------------------------------ Public methods ------------------------------ ###
 
 #if UNITY_EDITOR
         [UnityEditor.CustomEditor(typeof(ParticleSystemController))]
