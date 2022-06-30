@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace NrealEventSample
 {
-    public class Test : MonoBehaviour
+    public class FollowInViewUI : MonoBehaviour
     {
         [SerializeField] private float _distance = 1.2f;
         [SerializeField] private float _angle = 25f;
