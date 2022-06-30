@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using UnityEngine;
 
 namespace NrealEventSample
@@ -11,88 +11,32 @@ namespace NrealEventSample
 
         private Camera _camera;
         private Transform _cameraTransform;
+        private Coroutine _coroutine;
+        private bool _lastInView = false;
+
+        #region ### ------------------------------ MonoBehaviour ------------------------------ ###
 
         private void Start()
         {
             _camera = Camera.main;
             _cameraTransform = _camera.transform;
+
+            _lastInView = InView();
         }
 
         private void Update()
         {
-            if (!InView()) return;
+            bool inView = InView();
 
-            float t = Time.deltaTime * _speed;
-
-            Vector3 forward = _cameraTransform.forward;
-            float tan = Mathf.Tan(_angle * Mathf.Deg2Rad) * _distance;
-            Vector3 right = _cameraTransform.right * tan;
-            Vector3 up = _cameraTransform.up * tan;
-
-            Vector3 lv = (forward * _distance) - right;
-            Vector3 rv = (forward * _distance) + right;
-            Vector3 tv = (forward * _distance) + up;
-            Vector3 bv = (forward * _distance) - up;
-
-            Vector3 tl = _cameraTransform.position + lv;
-            Vector3 tr = _cameraTransform.position + rv;
-            Vector3 tt = _cameraTransform.position + tv;
-            Vector3 tb = _cameraTransform.position + bv;
-
-            Vector3[] ps = { tl, tr, tt, tb };
-            
-            float dist = float.MaxValue;
-            int index = -1;
-            for (int i = 0; i < ps.Length; i++)
+            if (!inView && _lastInView)
             {
-                float d = (ps[i] - transform.position).sqrMagnitude;
-                if (d < dist)
-                {
-                    dist = d;
-                    index = i;
-                }
+                StartMove();
             }
 
-            transform.position = Vector3.Lerp(transform.position, ps[index], t);
-
-            Vector3 dir = (transform.position - _cameraTransform.position).normalized;
-            transform.forward = Vector3.Lerp(transform.forward, dir, t);
+            _lastInView = inView;
         }
 
-        private void OnDrawGizmos()
-        {
-            if (!Application.isPlaying) return;
-            
-            Vector3 forward = _cameraTransform.forward;
-            float tan = Mathf.Tan(_angle * Mathf.Deg2Rad) * _distance;
-            Vector3 right = _cameraTransform.right * tan;
-            Vector3 up = _cameraTransform.up * tan;
-            
-            Gizmos.color = Color.blue;
-            Vector3 f = _cameraTransform.position + forward * _distance;
-            Gizmos.DrawWireSphere(f, 0.05f);
-
-            Vector3 r = f + right;
-            Gizmos.DrawWireSphere(r, 0.05f);
-            
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(_cameraTransform.position, _cameraTransform.position + r);
-            
-            Vector3 lv = (forward * _distance) - right;
-            Vector3 rv = (forward * _distance) + right;
-            Vector3 tv = (forward * _distance) + up;
-            Vector3 bv = (forward * _distance) - up;
-
-            Vector3 tl = _cameraTransform.position + lv;// - transform.position;
-            Vector3 tr = _cameraTransform.position + rv;// - transform.position;
-            Vector3 tt = _cameraTransform.position + tv;// - transform.position;
-            Vector3 tb = _cameraTransform.position + bv;// - transform.position;
-
-            Gizmos.DrawWireSphere(tl, 0.05f);
-            Gizmos.DrawWireSphere(tr, 0.05f);
-            Gizmos.DrawWireSphere(tt, 0.05f);
-            Gizmos.DrawWireSphere(tb, 0.05f);
-        }
+        #endregion ### ------------------------------ MonoBehaviour ------------------------------ ###
 
         private bool InView()
         {
@@ -101,9 +45,39 @@ namespace NrealEventSample
 
             float a = Mathf.Acos(d) * Mathf.Rad2Deg;
 
-            Debug.DrawLine(_cameraTransform.position, _cameraTransform.position + delta, Color.cyan, Time.deltaTime);
+            return a < _angle;
+        }
+
+        private void StartMove()
+        {
+            StopCoroutineIfNeeded();
             
-            return a > _angle;
+            Vector3 forward = _cameraTransform.forward;
+            Vector3 target = forward * _distance;
+            
+            _coroutine = StartCoroutine(MoveToView(target));
+        }
+
+        private IEnumerator MoveToView(Vector3 point)
+        {
+            while (true)
+            {
+                float t = Time.deltaTime * _speed;
+
+                transform.position = Vector3.Lerp(transform.position, point, t);
+
+                yield return null;
+            }
+        }
+
+        private void StopCoroutineIfNeeded()
+        {
+            if (_coroutine != null)
+            {
+                StopCoroutine(_coroutine);
+            }
+
+            _coroutine = null;
         }
     }
 }
