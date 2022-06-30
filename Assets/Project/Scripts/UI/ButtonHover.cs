@@ -15,7 +15,6 @@ public class ButtonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     #endregion ### ------------------------------ MonoBehaviour ------------------------------ ###
 
-
     #region ### ------------------------------ Public methods ------------------------------ ###
 
     public void OnPointerEnter(PointerEventData eventData)
