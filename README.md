@@ -4,6 +4,7 @@
 
 このプロジェクト内にはUI構築の際のサンプルが含まれています。
 
+![](Images/keyvisual.png)
 ![](Images/particle-ui.gif)
 ![](Images/follow-to-camera.gif)
 ![](Images/follow-to-camera_fix-horizontal.gif)
