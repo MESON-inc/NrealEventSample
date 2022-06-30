@@ -8,4 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Project/Scenes/FollowUI.unity
     guid: 5220e6ed0a07d3b45a0ef0c996ccbb18
+  - enabled: 1
+    path: Assets/Project/Scenes/HoverUI.unity
+    guid: eb117ae842973324eb512966f83f93fe
+  - enabled: 1
+    path: Assets/Project/Scenes/VignetteCheck.unity
+    guid: 89f1d9356d5114640a9dba79c15002d3
   m_configObjects: {}
