@@ -1,3 +1,4 @@
+using NRKernal;
 using UnityEngine;
 
 namespace NrealEventSample
@@ -15,7 +16,7 @@ namespace NrealEventSample
 
         private void Start()
         {
-            _cameraTransform = Camera.main.transform;
+            _cameraTransform = NRInput.CameraCenter;
         }
 
         private void Update()
