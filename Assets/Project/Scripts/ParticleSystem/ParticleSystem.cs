@@ -14,6 +14,7 @@ namespace NrealEventSample
         color = 1 << 1,
         scale = 1 << 2,
         velocity = 1 << 3,
+        active = 1 << 4,
     }
 
     public class ParticleSystem : MonoBehaviour
@@ -237,7 +238,7 @@ namespace NrealEventSample
 
                 ParticleData px = new ParticleData
                 {
-                    activateTypes = (uint)(ActivateType.targetPosition | ActivateType.color | ActivateType.velocity | ActivateType.scale),
+                    activateTypes = (uint)(ActivateType.targetPosition | ActivateType.color | ActivateType.velocity | ActivateType.scale | ActivateType.active),
                     scale = _particleScale,
                     targetPosition = p,
                     velocity = Random.insideUnitSphere * _magnification,
