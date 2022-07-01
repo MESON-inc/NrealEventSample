@@ -29,7 +29,7 @@ void Initialize(uint id : SV_DispatchThreadID)
     p.color = lerp(p.color, data.color, ((data.activateTypes >> 1) & 1));
     p.scale = lerp(p.scale, data.scale, ((data.activateTypes >> 2) & 1));
     p.velocity = lerp(p.velocity, data.velocity, ((data.activateTypes >> 3) & 1));
-    p.active = (_ParticleCount > id) ? 1 : 0;
+    p.active = (_ParticleCount > id) ? lerp(p.active, 1, (data.activateTypes >> 4 & 1)) : 0;
 
     _ParticleBuffer[id] = p;
 }

@@ -18,7 +18,7 @@ Shader "NrealEventSample/Particle"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
-            #include "Include/Particle.cginc"
+            #include "../Include/Particle.cginc"
 
             struct appdata
             {
